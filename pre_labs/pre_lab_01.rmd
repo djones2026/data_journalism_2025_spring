@@ -37,7 +37,8 @@ The library function loads an R library such as the tidyverse, providing access 
 
 ### Task 1: The console
 
-**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below. **Answer:**
+**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below. **Answer: 4**
+
 
 ### Task 2: Variables
 
@@ -55,14 +56,14 @@ number * number
 
 What does it return? Type your answer below:
 
-**Answer:**
+**Answer:4**
 
 ### Task 3: Install packages
 
 **Task** In the console, run the following code to install the Tidyverse:
 
 ```{r}
-install.packages('tidyverse')
+#install.packages('tidyverse')
 ```
 
 **Task** Add that
@@ -80,7 +81,7 @@ install.packages('rmarkdown')
 ```{r}
 # This is a comment inside of a codeblock. Comments doesn't run when we run the codeblock.
 # Adding this command is a good way to start your class reference notebook.
-library(tidyverse)
+#library(tidyverse)
 ```
 
 ## Chapter 10
@@ -106,16 +107,6 @@ glimpse(umd_courses)
 ```
 
 In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>). **Answer**
-
-### Task 7: Examine data "head"
-
-**Task** Run the following codeblock to use head() to examine the first six rows of data. Explore the data by clicking the black arrow on the right side of the output table, allowing you to examine additional columns.
-
-```{r}
-head(umd_courses)
-```
-
-In the space below, write the name of the business from the first row of the "name" column. **Answer**
 
 ### Task 8: Explore data with interactive dataframe
 
@@ -235,8 +226,37 @@ No code here; I want you to provide three questions that this data suggests to y
 
 **Answer**
 
-1.  
+1.  Only part of it worked for me, but i wasn't too sure what the issue was.
 
-2.  
+2.  Why does certain code not work even if you did all the steps right?
 
 3.  
+
+
+#Class 9/10 notes
+
+```{r}
+candy |>
+  group_by(color) |>
+  summarise(count =n(7))
+```
+
+```{r}
+glimspe(umd_courses)
+```
+```{r}
+head(umd_courses)
+```
+```{r}
+umd_courses |>
+  group_by(term) |>
+  summarise(
+    count_classes =n()
+    total_seats = sum(seats)
+  ) |>
+  arrange(desc(count_classes))
+  arrange(term,department)
+  
+  #asc: lowest to high 
+  #desc: highest to low 
+```
