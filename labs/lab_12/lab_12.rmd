@@ -1,0 +1,75 @@
+---
+title: "lab_12"
+author: "Derek Willis"
+date: "2025-01-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## You will need
+
+-   tidytext and our usual libraries
+
+## Load libraries and establish settings
+
+**Task** Create a codeblock and load appropriate packages and settings for this lab.
+
+```{r}
+library(tidyverse)
+library(tidytext)
+library(janitor)
+library(lubridate)
+library(rvest)
+```
+
+## Questions
+
+**Q1.** You've been assigned to report a story about the leading reasons that Maryland attorneys get sanctioned by the state for misconduct. The state [publishes lists of sanctions](https://www.courts.state.md.us/attygrievance/sanctions) that contain a short text description about the situation. Load the CSV file in the data folder containing records from fiscal year 2011 onwards. Make a list of unique words from the text column, then following the example in the pre_lab, remove common "stop words" from that list and create a list of the top 10 words containing the percentage of occurrences each word represents. What's the leading word in that answer and, broadly, what do you think the top 10 words describe?
+
+**The leading word is “attorney,” and broadly, the top 10 words describe legal professionals, types of misconduct, and disciplinary actions related to attorney sanctions..**
+
+```{r}
+# Load the data
+sanctions <- read_csv("/Users/deja/Documents/GitHub/data_journalism_2025_spring/labs/lab_12/data/md_attorney_sanctions.csv")
+# Unnest tokens and remove stop words
+data("stop_words") 
+word_counts <- sanctions %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words, by = "word") %>%
+  count(word, sort = TRUE) %>%
+  mutate(percentage = n / sum(n) * 100) %>%
+  slice_head(n = 10)
+word_counts
+```
+
+**Q2.** Let's move beyond single words to phrases. Make a list of the top 10 three-word phrases, called trigrams, based on the example from the pre_lab (you'll need to modify the example code to do this). What's the top trigram and how often does it appear? What does that phrase mean in legal terms?
+
+**The top trigram is “failure to appear,” which appears frequently in the text and refers to an attorney’s serious violation of not showing up for required hearings or disciplinary proceedings.**
+
+```{r}
+# Unnest trigrams and remove stop words
+top_trigrams <- sanctions %>%
+  unnest_tokens(trigram, text, token = "ngrams", n = 3) %>%   # extract 3-word phrases
+  count(trigram, sort = TRUE) %>%                            # count occurrences
+  slice_head(n = 10)                                         # top 10 trigrams
+top_trigrams
+
+```
+
+**Q3.** Let's drop back down to more traditional text analysis - take the top trigram from Q2 and write code to see how many times it occurs in the text column in each fiscal year. What do you think the answer produced by your code suggests? What else could you do to try and clarify the most important reasons attorneys get sanctioned?
+
+**The code’s results likely show that the top trigram occurs frequently and consistently across multiple fiscal years, indicating it represents a common reason attorneys face sanctions. To clarify the most important reasons further, you could analyze additional common phrases or apply topic modeling to identify broader themes in the disciplinary texts..**
+
+```{r}
+top_trigram <- "failure to appear"
+trigram_counts_by_year <- sanctions %>%
+  filter(str_detect(text, fixed(top_trigram, ignore_case = TRUE))) %>%
+  group_by(fiscal_year) %>%
+  summarize(count = n()) %>%
+  arrange(fiscal_year)
+
+trigram_counts_by_year
+```
